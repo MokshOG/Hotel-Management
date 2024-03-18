@@ -1,4 +1,4 @@
-# Hotel-Management
+#Hotel Management
 import random
 import datetime
 import mysql.connector as m
@@ -70,7 +70,7 @@ def Home():
 # Function used in booking
 
 def date(c):
-    if c[2] >= 2022 and c[2] <= 2024:
+    if c[2] >= 2024 and c[2] <= 2025:
             
         if c[1] != 0 and c[1] <= 12:
                     
@@ -132,13 +132,14 @@ def Booking():
     phone_no = input("Phone No.: ")
     cursor=myConnection.cursor()
     cursor.execute("USE HMS")
-    sql='SELECT* FROM C_DETAILS'
-    cursor.execute(sql)
-    data=cursor.fetchall()
-    for j in data:
-        if j[4]==phone_no:
-            print("\tPhone no. already exists and payment yet not done..!!")
-            Booking()
+    # cursor.execute("Create Table IF NOT EXISTS C_DETAILS")
+    # sql='SELECT* FROM C_DETAILS'
+    # cursor.execute(sql)
+    # data=cursor.fetchall()
+    # for j in data:
+    #     if j[4]==phone_no:
+    #         print("\tPhone no. already exists and payment yet not done..!!")
+    #         Booking()
     
 
     address = input("Address: ")
@@ -474,7 +475,7 @@ def Payment():
     if customer:
         cursor=myConnection.cursor()
         cursor.execute("USE HMS")
-        sql='SELECT A.CID, A.C_NAME, A.C_ADDRESS, A.C_COUNTRY , A.P_NO , A.C_EMAIL, A.CHECK_IN , A.CHECK_OUT , A.ROOM_CHOICE, A.NO_OF_DAYS, A.ROOMNO, A.ROOM_PRICE, SUM(B.BILL), C.GAMING_BILL FROM C_DETAILS A LEFT JOIN RESTAURENT B ON A.CID=B.CID LEFT JOIN GAMING C ON A.CID=C.CID WHERE A.CID=("{}")'.format(cid)
+        sql='SELECT A.CID, A.C_NAME, A.C_ADDRESS, A.C_COUNTRY , A.P_NO , A.C_EMAIL, A.CHECK_IN , A.CHECK_OUT , A.ROOM_CHOICE, A.NO_OF_DAYS, A.ROOMNO, A.ROOM_PRICE, SUM(B.BILL), SUM(C.GAMING_BILL) FROM C_DETAILS A LEFT JOIN RESTAURENT B ON A.CID=B.CID LEFT JOIN GAMING C ON A.CID=C.CID WHERE A.CID={} GROUP BY A.CID, A.C_NAME, A.C_ADDRESS, A.C_COUNTRY , A.P_NO , A.C_EMAIL, A.CHECK_IN , A.CHECK_OUT , A.ROOM_CHOICE, A.NO_OF_DAYS, A.ROOMNO, A.ROOM_PRICE'.format(cid)
         cursor.execute(sql)
         data=cursor.fetchall()
         if data!=[]:
@@ -488,7 +489,6 @@ def Payment():
                 print(" 3- Using UPI")
                 print(" 4- Cash")
                 x=int(input("-> "))
-                print("\n Amount: ",(int(n[11])*int(n[10])))
                 print("\n		 Pay For AnCasa")
                 print(" (y/n)")
                 ch=str(input("->"))
@@ -501,7 +501,7 @@ def Payment():
                     print(" --------------------------------")
                     print(" Name: ",n[1],"\t\n Phone No.: ",n[4],"\t\n Address: ",n[2],"\t")
                     print("\n Check-In: ",n[6],"\t\n Check-Out: ",n[7],"\t")
-                    print("\n Room Type: ",n[8],"\t\n Room Charges: ",(int(n[11])*int(n[10])),"\t")
+                    print("\n Room Type: ",n[8],"\t\n Room Charges: ",(int(n[11])*int(n[9])),"\t")
                     print(" Restaurant Charges: \t",n[12])
                     print(" Gaming Charges: \t",n[13])
                     print(" --------------------------------")
@@ -511,6 +511,8 @@ def Payment():
                         print("\n Total Amount: ",(int(n[11])*int(n[9]))+int(n[12]),"\t")
                     elif n[12]==None:
                         print("\n Total Amount: ",(int(n[11])*int(n[9]))+int(n[13]),"\t")
+                    else:
+                        print("\n Total Amount: ",(int(n[11])*int(n[9]))+int(n[13])+int(n[12]),"\t")
                         
                     print(" --------------------------------")
                     print("		 Thank You")
@@ -536,7 +538,7 @@ def Payment():
 def Record():
     cursor=myConnection.cursor()
     cursor.execute("USE HMS")
-    sql="SELECT A.CID, A.C_NAME, A.C_ADDRESS, A.C_COUNTRY , A.P_NO , A.C_EMAIL, A.CHECK_IN , A.CHECK_OUT , A.ROOM_CHOICE, A.NO_OF_DAYS, A.ROOMNO, A.ROOM_PRICE, B.BILL FROM C_DETAILS A LEFT JOIN RESTAURENT B ON A.CID=B.CID"
+    sql="SELECT CID, C_NAME, C_ADDRESS, C_COUNTRY , P_NO , C_EMAIL, CHECK_IN , CHECK_OUT , ROOM_CHOICE, NO_OF_DAYS, ROOMNO, ROOM_PRICE  FROM C_DETAILS  "
     cursor.execute(sql)
     data=cursor.fetchall()
     if data!=[]:
