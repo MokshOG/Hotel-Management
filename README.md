@@ -573,8 +573,7 @@ def searchCustomer():
         
     else:
         print("Record Not Found Try Again !")
-        
-        searchCustomer()
+
         
     cursor.close()
  
